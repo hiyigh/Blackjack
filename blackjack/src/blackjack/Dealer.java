@@ -21,6 +21,6 @@ public class Dealer {
 		}while(deck[shape][idx] == true);
 		
 		deck[shape][idx] = true;
-		return new Card(shape, idx, hidden);
+		return new Card(shape, idx + 1, hidden);
 	}
 }

@@ -6,7 +6,7 @@ public class Card implements Serializable{
 	private int num;
 	private int shape;
 	public boolean hidden;
-	public Card(int num, int shape, boolean hidden) {
+	public Card(int shpae, int num, boolean hidden) {
 		this.num = num;
 		this.shape = shape;
 		this.hidden = hidden;
