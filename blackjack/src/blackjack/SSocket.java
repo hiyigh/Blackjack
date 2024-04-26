@@ -14,14 +14,11 @@ import java.util.Scanner;
 public class SSocket {
 	//테이블	
 	private static boolean[][] deck = new boolean[4][13];
-	private static String[][] board = new String[16][60];
+	private static char[][] board = new char[16][60];
 	private static Dealer dealer;
 	private static int turn;
 	//플레이어
-	private static boolean[] onPlayers = new boolean[3];
-	private static boolean[] bustPlayers = new boolean[3];
-	private static int[] betList = new int[3];
-	private static int[] scoreList = new int[3];
+	private static ArrayList<PlayerInfo> players = new ArrayList<>();
 	//소켓
 	private static ArrayList<Table> members = new ArrayList<>();
 	private static int cnt;
@@ -62,7 +59,6 @@ public class SSocket {
 				oos = new ObjectOutputStream(cs.getOutputStream());
 				ois = new ObjectInputStream(cs.getInputStream());
 				pNum = playerNumber;
-				onPlayers[pNum] = true;
 			} catch (IOException e) {
 				System.out.println("table stream error");
 				e.printStackTrace();
@@ -83,29 +79,18 @@ public class SSocket {
 			dealer = Dealer.callDealer();
 			
 			sendMsg(oos, "Hello");
-			displayBoard();	
-			//first bet
-			receiveCmd(ois, pNum);
-			displayBoard();
-			//카드 전달, 저장, 출력
-			sendCard(oos, dealer.hit(deck, false));
-			receiveCardInfo(ois, pNum);
-			displayBoard();	
-			turn++;
+			displayBoard(-1);
 			
-			sendCard(oos, dealer.hit(deck, false));
-			receiveCardInfo(ois, pNum);
-			displayBoard();	
-			turn++;
+			
 		}
 	}
 	private static void setBoard() {
 		for (int i = 0; i < board.length; i++) {
 	        for (int j = 0; j < board[i].length; j++) {
 	        	if (i == 0 || i == board.length - 1) {
-	        		board[i][j] = "-";
+	        		board[i][j] = '-';
 	        	} else {
-	        		board[i][j] = " ";
+	        		board[i][j] = ' ';
 	        	}
 	        }
 	    }
@@ -120,44 +105,13 @@ public class SSocket {
 			}
 		}
 	}
-	private static void sendCard(ObjectOutputStream oos, Card card) {
-		try {
-			oos.writeObject(card);
-			oos.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	private static void receiveScore(ObjectInputStream ois, int playerNumber) {
-		try {
-			int score = ois.readInt();
-			scoreList[playerNumber] = score;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	private static void receiveCardInfo(ObjectInputStream ois, int playerNumber) {
-		try {
-			Object obj = ois.readObject();
-			if (obj instanceof String) {
-				String str = (String)obj;
-				board[12 - turn][playerNumber * 13] = str;
-			} 
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 	private static void receiveCmd(ObjectInputStream ois, int playerNumber) {
 		try {
 			Object obj = ois.readObject();
 			if(obj instanceof Cmd) {
 				Cmd cmd = (Cmd)obj;
-				executeCmd(cmd);
-				board[14][playerNumber * 13] = cmd.getPlayerNumber() + "player " + cmd.getCmd();
-				Integer b = betList[playerNumber];
-				board[13][playerNumber * 13] = b + "B";
+				parseCmd(cmd);
+				displayBoard(playerNumber);
 			}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -165,44 +119,113 @@ public class SSocket {
 			e.printStackTrace();
 		}	
 	}
-	private static void executeCmd(Cmd cmd) {
-		// 0 hit, 1 stand, 2 bet, 3 split, 4 surrender, 5 double down , 6 bust
-		int c = cmd.getCmdNum();
-		switch(c) {
-		case 0:	
+	private static void parseCmd(Cmd cmd) {
+		// 문자 , 번호, 배팅액, 서랜, 버스트, 스코어 ,
+		PlayerInfo pi = players.get(cmd.playerNumber);
+		pi.num = cmd.playerNumber;
+		switch(cmd.cmdNum) {
+		case 0:
+			pi.msg = "hit";
+			Card card = dealer.hit(deck, true);
+			card.setPlayerNum(cmd.playerNumber);
+			pi.cards.add(card);
 			break;
 		case 1:
-			onPlayers[cmd.playerNumber] = false;
+			pi.msg = "stand";
 			break;
 		case 2:
-			betList[cmd.playerNumber] += cmd.bet;
+			pi.msg = "bet";
+			pi.bet += cmd.bet;
 			break;
 		case 3:
-			
+			pi.msg = "split";
+			pi.splitCnt = cmd.splitCnt;
 			break;
 		case 4:
+			pi.msg = "surrender";
+			pi.surrender = true;
 			break;
 		case 5:
-			break;
-		case 6:
-			bustPlayers[cmd.playerNumber] = true;
+			pi.msg = "double down";
 			break;
 		}
 	}
-	private static void displayBoard() {
-		for (int i = 0; i < members.size(); ++i) {
-			 try {
-				 members.get(i).oos.writeObject(board);
-				 members.get(i).oos.flush();
-			} catch (IOException e) {
-				e.printStackTrace();
+	private static void displayBoard(int playerNumber) {
+		//update board
+		if(playerNumber != -1) {		
+			PlayerInfo pi = players.get(playerNumber);
+			int c_len = pi.cards.size();
+			char shape;
+			int num;
+			String msg = pi.msg;
+			Card card = null;
+			for (int i = 0; i < c_len; ++i) {
+				card = pi.cards.get(i);
+				shape = setCardShape(pi.cards.get(i).getShape());
+				num = card.getNum();
+				// 
+				board[12-i][playerNumber * 20] = shape;
+				board[12-i][playerNumber * 20 + 1] = (char)num;
+			}
+			board[13][playerNumber * 20] = (char)playerNumber;
+			for (int i = 0; i < msg.length(); ++i) {
+				board[13][playerNumber * 20 + (i+1)] = msg.charAt(i);
+			}
+			board[14][playerNumber * 20] = (char)pi.bet;
+			String bet = "bet";
+			for (int i = 0; i < 3; ++i) {			
+				board[14][playerNumber * 20 + (i + 1)] = bet.charAt(i);
+			}
+			//
+			for (int i = 0; i < members.size(); ++i) {
+				try {
+					
+					members.get(i).oos.writeObject(board);
+					members.get(i).oos.flush();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			for(int i = 0; i < board.length; ++i) {
+				for (int j = 0; j < board[i].length; ++j) {
+					System.out.print(board[i][j]);
+				}
+				System.out.println();
+			}
+		} else {
+			for (int i = 0; i < members.size(); ++i) {
+				try {
+					
+					members.get(i).oos.writeObject(board);
+					members.get(i).oos.flush();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			for(int i = 0; i < board.length; ++i) {
+				for (int j = 0; j < board[i].length; ++j) {
+					System.out.print(board[i][j]);
+				}
+				System.out.println();
 			}
 		}
-		for(int i = 0; i < board.length; ++i) {
-			for (int j = 0; j < board[i].length; ++j) {
-				System.out.print(board[i][j]);
-			}
-			System.out.println();
+	}
+	private static char setCardShape(int shape) {
+		char sh = 0;
+		switch(shape) {
+		case 0:
+			sh = '\u2665';
+			break;
+		case 1:
+			sh = '\u2660';
+			break;
+		case 2:
+			sh = '\u2666';
+			break;
+		case 3:
+			sh = '\u2663';
+			break;
 		}
+		return sh;
 	}
 }

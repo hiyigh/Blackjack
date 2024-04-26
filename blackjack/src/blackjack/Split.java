@@ -1,6 +1,5 @@
 package blackjack;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Split extends Player {

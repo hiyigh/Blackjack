@@ -13,19 +13,20 @@ import java.util.Scanner;
 
 public class Player {
 	private static final int serverPort = 7777;
-	private final Scanner sc = new Scanner(System.in);
+	private static final Scanner sc = new Scanner(System.in);
 	private static ObjectInputStream ois = null;
 	private static ObjectOutputStream oos = null;
-	
-	private static String[][] board = new String[16][60];
 
 	//user info
-	private ArrayList<Card> cards = new ArrayList<>();
 	private ArrayList<Split> splitList = new ArrayList<>();
 	private int playerNumber;
 	private Cmd cmd;
-	private int totalBet;
+	private int totalBet = 0;
 	private int money;
+	private int splitCnt = 0;
+	
+	private boolean surrenflag = false;
+	private boolean bustflag = false;
 	
 	public static void main (String[] args) {
 		Player player = new Player();
@@ -40,42 +41,11 @@ public class Player {
 			Thread th = new Thread(new Runnable() {
 				@Override
 				public void run() {
-					//cmd
-					//if splitList is not null // send split count 
-					//for loop
-					receiveMsg();
-					displayBoard();				
-					// 0 hit, 1 stand, 2 bet, 3 split, 4 surrender, 5 double down , 6 bust
-					checkCmd(2, cmd);
-					
-					sendCmd(cmd);
-					displayBoard();
-					
-					//first betting
-					Card card = receiveCard();
-					sendCard(card);	
-					
-					card = receiveCard();
-					sendCard(card);	
-					
-					boolean onGame = true;
-					boolean onPlay = true;
-					while(onGame) {
-						if (onPlay) {
-							System.out.println("your turn");
-							System.out.println("0 hit, 1 stand, 2 bet, 3 split, 4 surrender, 5 double down , 6 bust");
-							int i = receiveInt(sc, 0, 6);
-							onPlay = checkCmd(i, cmd);
-							sendCmd(cmd);
-							if (receiveMsg().equals("open")) {
-								onPlay = false;
-								onGame = false;
-								sendScore();
-							}
-							displayBoard();
-						} else {
-							displayBoard();
-						}
+					while(true) {
+						receiveMsg();
+						
+						displayBoard();
+						
 						
 					}
 				}
@@ -85,34 +55,32 @@ public class Player {
 			e.printStackTrace();
 		}
 	}
-	private boolean checkCmd(int i , Cmd cmd) {
-		switch(i) {
-		case 0:
-			cmd.setCmd(i, playerNumber);
-			break;
-		case 1:
-			cmd.setCmd(i, playerNumber);
-			break;
-		case 2:
-			int b = receiveInt(sc, 10, money);
-			cmd.setCmd(i, playerNumber);
-			cmd.setBet(b);
-			break;
-		case 3:
-			break;
-		case 4:
-			cmd.setCmd(i, playerNumber);
-			return false;
-		case 5:
-			cmd.setCmd(i, playerNumber);
-			break;
-		case 6:
-			return false;
+	private void sendCmd() {
+		Cmd cmd = new Cmd();
+		int cn = sendInt(sc, 0, 5);
+		if (cn == 2) {
+			cmd.bet = sendInt(sc, 10, money);		
+		} else if (cn == 3){
+			Split split = new Split();
+			splitList.add(split);
+			splitCnt += 1;
+			cmd.splitCnt = splitCnt;
+		} else if (cn == 4) {
+			surrenflag = true;
+		} else if (cn == 6) {
+			bustflag = true;
+		} 
+		cmd.setCmd(cn, playerNumber);
+		
+		try {
+			oos.writeObject(cmd);
+			oos.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		return true;
 	}
-	// stand , bet , split, double down, surrender, bust, counting
-	private int receiveInt(Scanner sc, int start, int end) {
+	//hit, stand , bet , split, surrender, double down, bust, counting
+	private int sendInt(Scanner sc, int start, int end) {
 		int cmd;
 		while(true) {
 			try {
@@ -127,21 +95,7 @@ public class Player {
 		}
 		return cmd;
 	}
-	private Card receiveCard() {
-		try {
-			Object obj = ois.readObject();
-			if (obj instanceof Card) {
-				Card c = (Card)obj;
-				cards.add(c);
-				return c;
-			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+	
 	private String receiveMsg() {
 		String msg = "";
 		try {
@@ -155,49 +109,13 @@ public class Player {
 		}
 		return msg;
 	}
-	private void sendScore() {
-		int score = 0;
-		for(int i = 0; i < cards.size(); ++i) {
-			score += cards.get(i).getNum();
-		}
-		try {
-			oos.writeInt(score);
-			oos.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	private void sendCard(Card c) {
-		try {
-			String str = null;
-			if (c.isHidden()) {
-				str = "□ □";
-			} else {
-				char shape = setCardShape(c.getShape());
-				int number =c.getNum();
-				str = shape +""+number;				
-			}
-			oos.writeObject(str);
-			oos.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		displayBoard();
-	}
-	private void sendCmd(Cmd cmd) {
-		try {
-			oos.writeObject(cmd);
-			oos.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+	
 	private void displayBoard() {
 		try {
 			Object obj = ois.readObject();
-			if(obj instanceof String[][]) {
-				board = (String[][])obj;			
-				for (int i = 0 ; i < board.length; ++i) {
+			if (obj instanceof char[][]) {
+				char[][] board = (char[][])obj;
+				for (int i = 0; i < board.length; ++i) {
 					for (int j = 0; j < board[i].length; ++j) {
 						System.out.print(board[i][j]);
 					}
@@ -209,31 +127,7 @@ public class Player {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-	private void setPlayerNumber() {
-		try {
-			this.playerNumber = ois.readInt();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	private char setCardShape(int shape) {
-		char sh = 0;
-		switch(shape) {
-		case 0:
-			sh = '\u2665';
-			break;
-		case 1:
-			sh = '\u2660';
-			break;
-		case 2:
-			sh = '\u2666';
-			break;
-		case 3:
-			sh = '\u2663';
-			break;
-		}
-		return sh;
+		
 	}
 	
 }
