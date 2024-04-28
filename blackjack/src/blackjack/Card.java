@@ -6,6 +6,7 @@ public class Card implements Serializable{
 	private int num;
 	private int shape;
 	public boolean hidden;
+	public int playerNum;
 	public Card(int shpae, int num, boolean hidden) {
 		this.num = num;
 		this.shape = shape;
@@ -19,5 +20,8 @@ public class Card implements Serializable{
 	}
 	public boolean isHidden() {
 		return hidden;
+	}
+	public void setPlayerNum(int pn) {
+		this.playerNum = pn;
 	}
 }
