@@ -23,7 +23,7 @@ public class Player {
 	private ArrayList<Card> cards = new ArrayList<>();
 	private ArrayList<Split> splitList = new ArrayList<>();
 	private int playerNumber;
-	private Cmd cmd;
+	private Request request;
 	private int totalBet;
 	private int money;
 	
@@ -36,20 +36,15 @@ public class Player {
 			ois = new ObjectInputStream(ss.getInputStream());
 			oos = new ObjectOutputStream(ss.getOutputStream());
 			money = 1000;
-			cmd = new Cmd();
 			Thread th = new Thread(new Runnable() {
 				@Override
 				public void run() {
-					//cmd
-					//if splitList is not null // send split count 
-					//for loop
-					receiveMsg();
-					displayBoard();				
-					// 0 hit, 1 stand, 2 bet, 3 split, 4 surrender, 5 double down , 6 bust
-					checkCmd(2, cmd);
 					
-					sendCmd(cmd);
-					displayBoard();
+					receiveMsg();
+					receiveBoard();				
+					// 0 hit, 1 stand, 2 bet, 3 split, 4 surrender, 5 double down , 6 bust
+					sendRequest();
+					receiveBoard();
 					
 					//first betting
 					Card card = receiveCard();
@@ -85,34 +80,35 @@ public class Player {
 			e.printStackTrace();
 		}
 	}
-	private boolean checkCmd(int i , Cmd cmd) {
-		switch(i) {
+	private void sendRequest(Request re, int number) {
+		re.setcNum(number);
+		switch(number) {
 		case 0:
-			cmd.setCmd(i, playerNumber);
+			re.setMsg("hit");
 			break;
 		case 1:
-			cmd.setCmd(i, playerNumber);
+			re.setMsg("stand");
 			break;
 		case 2:
-			int b = receiveInt(sc, 10, money);
-			cmd.setCmd(i, playerNumber);
-			cmd.setBet(b);
+			re.setMsg("bet");
+			re.setBet(intScanner(sc, 10, money));
 			break;
 		case 3:
+			re.setMsg("split");
 			break;
 		case 4:
-			cmd.setCmd(i, playerNumber);
-			return false;
+			re.setMsg("surrender");
+			break;
 		case 5:
-			cmd.setCmd(i, playerNumber);
+			re.setMsg("doubledown");
 			break;
 		case 6:
-			return false;
+			re.setMsg("bust");
+			break;
 		}
-		return true;
 	}
 	// stand , bet , split, double down, surrender, bust, counting
-	private int receiveInt(Scanner sc, int start, int end) {
+	private int intScanner(Scanner sc, int start, int end) {
 		int cmd;
 		while(true) {
 			try {
@@ -192,7 +188,7 @@ public class Player {
 			e.printStackTrace();
 		}
 	}
-	private void displayBoard() {
+	private void receiveBoard() {
 		try {
 			Object obj = ois.readObject();
 			if(obj instanceof String[][]) {
