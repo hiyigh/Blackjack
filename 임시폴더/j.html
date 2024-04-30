@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<script src="j.js" defer></script>
+<!-- <script>
+    // 객체 변수 선언
+    let id;
+    let pw;
+    
+    function init(){
+        id = document.querySelector("#id");
+        pw = document.querySelector("#pw");
+        id.addEventListener("keyup", ()=> {
+
+        });
+    }
+</script> -->
+<link rel="stylesheet" href="j.css">
+<body>
+    <h1>회원가입</h1>
+    <span class="star">●</span><span style="font-weight: bolder;">온라인 회원가입 작성</span>
+    <hr>
+    <div class="comment1">
+        <span>고객님의 정보는 개인정보 보호정책에 의해 철저하게 보호됩니다.</span>
+    </div>
+    <hr>
+    <div class="body">
+        <form action="#" method="post" onsubmit="preventEnter(event)">
+            <table>
+                <tr>
+                    <td class="col1"><label for="id">사용자 ID</label><span class="star">＊</span></td>
+                    <td class="col2"><input class="need" name="id" id="id" size="20" maxlength="20" required vlaue="" type="text" onclick="checkId(this)"><button style="margin-left:5px;">ID 중복확인</button>
+                    <br><span class="alert" id="id_a"></span></td>
+
+                </tr>
+                <tr>
+                    <td class="col1"><label for="pw">비밀번호</label><span class="star">＊</span></td>
+                    <td class="col2"><input class="need" name="pw" id="pw" size="20" maxlength="20" required vlaue="" type="password" oninput="checkPassword(this)"><span>4~12자리의 영문,숫자,특수문자(!,@,$,%,^,&,*)만 가능</span>
+                    <br><span class="alert" id="pw_a" ></span></td>
+                </tr>
+                <tr>
+                    <td class="col1"><label for="pc">비밀번호 확인</label><span class="star">＊</span></td>
+                    <td class="col2"><input class="need" name="pc" id="pc" size="20" maxlength="20" required vlaue="" type="password" onkeyup="passwordCheck(this)">
+                        <br><span class="alert" id="pc_a"></span></td>
+                </tr>
+                <tr>
+                    <td class="col1"><label for="name">성명</label><span class="star">＊</span></td>
+                    <td class="col2"><input class="need" name="name" id="name" size="20" maxlength="20" required vlaue="" type="text" onkeyup="checkName(this)"><span>띄어쓰기 없이 입력, 반드시 실명이어야 합니다.</span>
+                        <br><span class="alert" id="name_a" ></span></td>
+                </tr>
+                <tr>
+                    <td class="col1"><label for="email">E-mail</label><span class="star">＊</span></td>
+                    <td class="col2"><input name="email" id="email" size="10" maxlength="10" required vlaue="" type="text"> @
+                        <input id="domain-txt" size="10" maxlength="10" type="text">
+                        <select class="box" id="domain-list">
+                            <option value="type">직접입력</option>
+                            <option value="naver.com">naver.com</option>
+                            <option value="google.com">google.com</option>                                                                        
+                          </select>
+                        <span>메일수신여부</span><br>
+                        <span class="alert" id="email_a" ></span>
+                        &nbsp;<span><b>할인 이벤트 정보</b>및 할인쿠폰, 관심분야 등 꼭 필요한 정보를 빠르게 받아 보실 수 있습니다.</span><br>
+                        &nbsp;<span>비밀번호 분실시 E-mail로 확인해 드리니, <b style="color:green">정확한 E-mail주소를 기입</b>해 주세요</span></td>
+                </tr>
+                <tr>
+                    <td class="col1"><label for="post">우편번호</label><span class="star">＊</span></td>
+                    <td class="col2"><input class="need" name="post" id="post" size="7" maxlength="7" readonly vlaue="" type="text"> -
+                        <input name="" id="" size="7" maxlength="7" readonly vlaue="" type="text" onfocus="checkAddress()"><button style="margin-left:5px;">우편번호 검색</button>
+                        <br><span class="alert" id="post_a" ></span></td>
+
+                </tr>
+                <tr>
+                    <td class="col1"><label for="address">주소</label><span class="star">＊</span></td>
+                    <td class="col2"><input class="need" name="address" id="address" size="40" maxlength="40" required vlaue="" type="text"><br>
+                        <input size="40" maxlength="40" type="text">
+                        <br><span class="alert" id="address_a"></span></td>
+                </tr>
+                <tr>
+                    <td class="col1"><label for="phone">휴대폰번호</label><span class="star">＊</span></td>
+                    <td class="col2"><input class="need" name="phone" size="20" maxlength="20" id="phone" type="tel" onkeyup="checkPhone(this)">                        
+                        <br><span class="alert" id="phone_a" ></span></td>
+                </tr>
+            </table>
+            <div id="nextBtn">
+                <button style="width:70px; height: 30px;" onclick="checkBlank()">다음</button>    
+            </div>
+        </form>
+    </div>
+</body>
+</html>

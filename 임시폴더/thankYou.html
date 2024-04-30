@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    body{
+        width: 1200px;
+        height: 98vh;
+        margin: 0 auto;
+        border:1px solid black;
+    }
+    section{
+        height: 65%;
+        border-top:1px solid black;
+        border-bottom:1px solid black;
+        background-color:palegreen;
+    }
+    header{
+        height: 10%;
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        position: relative;
+    }
+    .header_top{
+        width: 100%;
+        display:flex;
+        justify-content: space-between;
+    }
+    .header_top .header_list{
+        display:flex;
+        flex-direction: row;
+    }
+    #img{
+        margin-top:10px;
+        margin-left:10px;
+        width: 150px;
+        height: 50px;
+    }
+    .home_map{
+        margin-top:10px;
+        margin-right: 10px;
+        text-decoration-line: none;
+        color : black;
+        list-style-type:none;
+    }
+    nav{
+        display:flex;
+        justify-content: space-between;
+        
+        width: 100%;
+        height: auto;
+    }
+    .mainlist{
+        padding:0px;
+    }
+    .ulist {
+        list-style-type: none;
+        display:flex;
+        flex-direction: row;
+    }
+    .menu{
+        text-decoration-line: none;
+        color: black;
+        padding-right: 20px;
+    }
+    #subboard, #submusic{
+        position:absolute;
+        display:none;
+        list-style-type: none;
+    }
+    footer .copyright{
+        border-top:1px solid black;
+        padding-top: 3%;
+    }
+    li{
+        font-weight: bolder;
+    }
+</style>
+<script>
+    function drop(element) {
+        let sub = document.querySelector("#sub"+element.id);        
+        if (sub.style.display === "none" || sub.style.display === "") {
+            sub.style.display = "block";
+        }        
+    }
+    function roll(element) {
+        let sub = document.querySelector("#sub"+element.id);
+        if (sub.style.display === "block") {
+            sub.style.display = "none";
+        }        
+    }
+</script>
+<body>
+    <header>
+        <div class="header_top">
+            <img id="img" src="thankYou.png" alt="thanks">
+            <ul class="header_list">
+                <li class="ulist"><a href="#" class="home_map">Home</a></li>
+                <li class="ulist"><a href="#" class="home_map">SiteMap</a></li>
+            </ul>
+        </div>
+    </header>
+    <nav>
+        <ul class="ulist" id="mainlist">
+            <li><a href="#" class="menu">Home</a></li>
+            <li><a href="#" class="menu">gallery</a></li>
+            <li><a href="#" class="menu drop" id="board" onmouseover="drop(this)" onmouseout ="roll(this)">게시판</a>
+                <ul class="ulist sublist" id="subboard">
+                    <li><a href="#" class="menu">자유 게시판</a></li>
+                    <li><a href="#" class="menu">문의 게시판</a></li>
+                    <li><a href="#" class="menu">건의 게시판</a></li>
+                </ul>
+            </li>
+            <li><a href="#" class="menu drop" id="music" onmouseover="drop(this)" onmouseout ="roll(this)">멀티미디어</a>
+                <ul class="ulist sublist" id="submusic">
+                    <li><a href="#" class="menu">음악 듣기</a></li>
+                    <li><a href="#" class="menu">동영상 보기</a></li>
+                </ul>
+            </li>
+            <li><a href="#" class="menu">상품구매</a></li>
+            <li><a href="#" class="menu">찾아오시는길</a></li>
+        </ul>
+        <div>
+            <ul class="ulist">
+                <li><a href="login.html" class="menu">로그인</a></li>
+                <li><a href="j.html" class="menu">회원가입</a></li>
+            </ul>
+        </div>
+    </nav>
+    <section>
+        <div class="content">
+
+        </div>
+    </section>
+    <footer>
+        <div>
+            <ul class="ulist">
+                <li><a href=""class="menu">다운로드</a></li>
+                <li><a href="" class="menu">개인정보처리방침</a></li>
+                <li><a href="" class="menu">저작권지침및신고</a></li>
+                <li><a href="" class="menu">이메일무단수집거부</a></li>
+            </ul>
+        </div>
+        <div class="copyright">
+            <span style="padding-left:3%;">왕십리~~</span><br>
+            <span style="padding-left:3%;">Copyright</span>
+        </div>
+    </footer>
+</body>
+</html>

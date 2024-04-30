@@ -1,0 +1,46 @@
+.star{
+    color:red;
+}
+body{
+    width:90%;
+    height:90%;
+    margin :0 auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+h1{
+    text-align:center;
+}
+.comment1{
+    margin-top:30px;
+    margin-bottom:30px;
+}
+table{
+    border-collapse: collapse;
+
+    width: 100%;
+}
+table tr{
+    height: 70px;
+}
+table td{
+    border-top:1px solid black;
+    border-bottom:1px solid black;
+}
+table .col1 {
+    background-color: lightgray;
+    text-align: center;
+}
+input {
+    margin-top: 5px;
+    margin-left:5px;
+    height: 20px;
+}
+label{
+    font-weight: bolder;
+    color:gray;
+}
+#nextBtn{
+    text-align: center;
+    margin-top: 30px;
+}
