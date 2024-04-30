@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script
+    src="https://kit.fontawesome.com/6a2bc27371.js"
+    defer
+    crossorigin="anonymous"
+  ></script>
+</head>
+
+<link rel="stylesheet" href="thankYou.css">
+<script src="thankYou.js"></script>
+<body onload="call_js()">
+    <header>
+        <div class="header_top">
+            <img id="thankimg" src="thankYou.png" alt="thanks">
+            <ul class="header_list">
+                <li class="ulist"><a href="#" class="home_map">Home</a></li>
+                <li class="ulist"><a href="#" class="home_map">SiteMap</a></li>
+            </ul>
+        </div>
+    </header>
+    <nav>
+        <ul class="ulist" id="mainlist">
+            <li><a href="#" class="menu">Home</a></li>
+            <li><a href="#" class="menu">gallery</a></li>
+            <li id="board">
+                <a href="#" class="menu dropmenu" >게시판</a>
+                <ul class="sublist" id="subboard">
+                    <li><a href="#" class="menu">자유 게시판</a></li>
+                    <li><a href="#" class="menu">문의 게시판</a></li>
+                    <li><a href="#" class="menu">건의 게시판</a></li>
+                </ul>
+            </li>
+            <li id="music"><a href="#" class="menu dropmenu" >멀티미디어</a>
+            <ul class="sublist" id="submusic">
+                <li><a href="#" class="menu">음악 듣기</a></li>
+                <li><a href="#" class="menu">동영상 보기</a></li>
+            </ul>
+            </li>
+            <li><a href="#" class="menu">상품구매</a></li>
+            <li><a href="#" class="menu">찾아오시는길</a></li>
+        </ul>
+        <div>
+            <ul class="ulist">
+                <li><a href="login.html" class="menu">로그인</a></li>
+                <li><a href="j.html" class="menu">회원가입</a></li>
+            </ul>
+        </div>
+    </nav>
+    <section>
+            <div class="slideshow">
+                <div class="slidebox">
+                    <a href=""><img class="img" src="이미지/slide-1.jpg" alt=""></a>
+                    <a href=""><img class="img" src="이미지/slide-2.jpg" alt="" ></a>
+                    <a href=""><img class="img" src="이미지/slide-3.jpg" alt="" ></a>
+                    <a href=""><img class="img" src="이미지/slide-4.jpg" alt="" ></a>
+                </div>
+                <div class="controller">
+                    <a href="#" class="prev a"><i class="fa-solid fa-circle-chevron-left"></i></a>
+                    <a href="#" class="next"><i class="fa-solid fa-circle-chevron-right"></i></a>    
+                </div>
+                <div class="indicators">
+                    <a href="#" class="active"><i class="fa-solid fa-circle-dot"></i></a>
+                    <a href="#"><i class="fa-solid fa-circle-dot"></i></a>
+                    <a href="#"><i class="fa-solid fa-circle-dot"></i></a>
+                    <a href="#"><i class="fa-solid fa-circle-dot"></i></a>
+                </div>
+            </div>
+    </section>
+    <div class="body_bottom">
+        <div class="aside">
+            <div class="profile">
+                <a href="#" id="profile_a"><img src="이미지/snow.jpg" alt=""></a>
+                <div>
+                    <span id="name">이름</span>
+                    <span id="introduce">소개</span>
+                </div>
+            </div>
+            <div class="board_list">
+
+            </div>
+        </div>
+        <div class="board">
+            <div class="adv"></div>
+            <div class="board_t">
+                <table id="board_table">
+                    <tr id="board_table_tr">
+                        <td id="num" style="width:20%;">번호</td>
+                        <td id="title" style="width:60%;">제목</td>
+                        <td id="writer" style="width:20%;">작성자</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <div>
+            <ul class="ulist">
+                <li><a href=""class="menu">다운로드</a></li>
+                <li><a href="" class="menu">개인정보처리방침</a></li>
+                <li><a href="" class="menu">저작권지침및신고</a></li>
+                <li><a href="" class="menu">이메일무단수집거부</a></li>
+            </ul>
+        </div>
+        <div class="copyright">
+            <span style="padding-left:3%;">왕십리</span><br>
+            <span style="padding-left:3%;">Copyright</span>
+        </div>
+    </footer>
+</body>
+</html>
